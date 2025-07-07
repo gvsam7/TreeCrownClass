@@ -1,4 +1,4 @@
-# Deep_Augmentations
+# Trre Crown Classification
 
 ## Description
 
@@ -7,7 +7,7 @@ The architectures under investigation are comprised of Convolutional Neural Netw
 
 Moreover, conducting an investigation regarding Deep Learning Multimodal data fusion.
 
-![alt text](https://github.com/gvsam7/Deep_Augmentations/blob/main/Images/SSRP_Classifier.PNG)
+![alt text](https://github.com/gvsam7/TreeCrownClass/blob/main/Images/TreeCrownClass.JPG)
 
 *Data:*  RGB and NDVI UAV tree crown species from Wytham Forest.
 Stratification method was used to split the data to train/validate: 80% (out of which train: 80% and
