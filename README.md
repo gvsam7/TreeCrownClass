@@ -9,7 +9,7 @@ Moreover, conducting an investigation regarding Deep Learning Multimodal data fu
 
 ![alt text](https://github.com/gvsam7/Deep_Augmentations/blob/main/Images/SSRP_Classifier.PNG)
 
-*Data:*  Sussex Sustainability Research Programme (SSRP) dataset.
+*Data:*  RGB and NDVI UAV tree crown species from Wytham Forest.
 Stratification method was used to split the data to train/validate: 80% (out of which train: 80% and
 validation: 20%), and test: 20% data.
 
