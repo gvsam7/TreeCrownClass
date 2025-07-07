@@ -17,7 +17,7 @@ validation: 20%), and test: 20% data.
 
 *Architectures:* 4, and 5 CNN, ResNet18, ResNet50, ResNet101, ResNet152, VGG11, VGG13, VGG16, VGG19, AlexNet.
 
-*Images:* compressed 50x50, 100x100, and 256x256 pixel images. Note that 50x50 was too small for the 5 CNNs.
+*Images:* Size: 64x64, 128x128, 256x256, and 512x512 pixel images. 
 
 *Test Procedure:* 5 runs for each architecture for each of the compressed data. Then plot the Interquartile range.
 
@@ -25,19 +25,3 @@ validation: 20%), and test: 20% data.
 
 *Data augmentations:* Geometric Transformations, Cutout, Mixup, and CutMix, Pooling (Global Pool, Mix Pool, Gated Mix Pool).
 
-## Demo
-![](https://github.com/gvsam7/Deep_Augmentations/blob/main/Images/Demo.gif)
-
-## Google Colab
-- CNN5 Classification Activation Map (CAM)[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1jICBINwqq2AC9N5vtme7UfkJHTxK8yIR)
-- Gabor Mix Pool CNN Classification Activation Map (CAM)[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1QX8Egvzb4NTzcDK9qPkiMeq8p9eEc6sr)
-- Dilated Gabor Mix Pool CNN Classification Activation Map (CAM)[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1yfBp_VobZVvm-leq-Ufa4_3KdBl6kNT0)
-
-## Papers
-- [Improved Regularization of Convolutional Neural Networks with Cutout](https://arxiv.org/abs/1708.04552)
-- [Mixup: Beyond Empirical Risk Minimization](https://arxiv.org/abs/1710.09412)
-- [CutMix: Regularization Strategy to Train Strong Classifiers with Localizable Features](https://arxiv.org/abs/1905.04899)
-- [Generalizing Pooling Functions in Convolutional Neural Networks: Mixed, Gated, and Tree](https://arxiv.org/abs/1509.08985)
-- [ImageNet-Trained CNNs are Biased Towards Texture; Increasing Shape Bias Improves Accuracy and Robustness](https://arxiv.org/abs/1811.12231)
-- [The Origins and Prevalence of Texture Bias in Convolutional Neural Networks](https://arxiv.org/abs/1911.09071)
-- [Combining Diverse Feature Priors](https://arxiv.org/abs/2110.08220)
