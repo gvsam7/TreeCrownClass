@@ -80,3 +80,8 @@ def main():
     else:
         dataset = ImageFolder("TreeCrown64")
     print(f"Dataset is {args.dataset}")
+
+
+if __name__ == "__main__":
+    main()
+    
