@@ -161,22 +161,22 @@ def main():
                 }
                 save_checkpoint(checkpoint)
 
-                # Evaluate Network
-                model.eval()
-                sum_acc = 0
-                for data, targets in val_loader:
-                    data = data.to(device=device)
-                    targets = targets.to(device=device)
-                    val_acc, val_loss = step(data, targets, model=model, optimizer=optimizer, criterion=criterion,
-                                             train=False)
-                    sum_acc += val_acc
-                val_avg_acc = sum_acc / len(val_loader)
+        # Evaluate Network
+        model.eval()
+        sum_acc = 0
+        for data, targets in val_loader:
+            data = data.to(device=device)
+            targets = targets.to(device=device)
+            val_acc, val_loss = step(data, targets, model=model, optimizer=optimizer, criterion=criterion,
+                                     train=False)
+            sum_acc += val_acc
+        val_avg_acc = sum_acc / len(val_loader)
 
-                print(
-                    f"Epoch: {epoch + 1} \tTraining accuracy: {train_avg_acc:.2f} \n\t\tValidation accuracy: {val_avg_acc:.2f}")
+        print(
+            f"Epoch: {epoch + 1} \tTraining accuracy: {train_avg_acc:.2f} \n\t\tValidation accuracy: {val_avg_acc:.2f}")
 
-                train_steps = len(train_loader) * (epoch + 1)
-                wandb.log({"Train Accuracy": train_avg_acc, "Validation Accuracy": val_avg_acc}, step=train_steps)
+        train_steps = len(train_loader) * (epoch + 1)
+        wandb.log({"Train Accuracy": train_avg_acc, "Validation Accuracy": val_avg_acc}, step=train_steps)
 
     train_preds = get_all_preds(model, loader=prediction_loader, device=device)
     print(f"Train predictions shape: {train_preds.shape}")
@@ -200,13 +200,13 @@ def main():
 
     n_images = 48
     if args.dataset == 'TreeCrown_512':
-        classes = os.lisdir('TreeCrown_512')
+        classes = os.listdir('TreeCrown_512')
     elif args.dataset == 'TreeCrown_256':
-        classes = os.lisdir('TreeCrown_256')
+        classes = os.listdir('TreeCrown_256')
     elif args.dataset == 'TreeCrown_128':
-        classes = os.lisdir('TreeCrown_128')
+        classes = os.listdir('TreeCrown_128')
     else:
-        classes = os.lisdir('TreeCrown_64')
+        classes = os.listdir('TreeCrown_64')
 
     plot_most_incorrect(incorrect_examples, classes, n_images)
     wandb.save('Most_Conf_Incorrect_Pred.png')

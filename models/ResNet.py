@@ -1,5 +1,5 @@
 import torch.nn as nn
-from models.Block import Block
+from models.Block import Block, BasicBlock
 
 
 class ResNet(nn.Module):
@@ -18,7 +18,8 @@ class ResNet(nn.Module):
         self.layer4 = self._make_layer(block, layers[3], out_channels=512, stride=2)  # 2048
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(512 * 4, num_classes)
+        # self.fc = nn.Linear(512 * 4, num_classes)
+        self.fc = nn.Linear(512 * block.expansion, num_classes)
 
     def forward(self, x):
         x = self.conv1(x)
@@ -41,14 +42,18 @@ class ResNet(nn.Module):
         identity_downsample = None
         layers = []
 
-        if stride != 1 or self.in_channels != out_channels * 4:
+        if stride != 1 or self.in_channels != out_channels * block.expansion:
+        # if stride != 1 or self.in_channels != out_channels * 4:
             identity_downsample = nn.Sequential(
-                nn.Conv2d(self.in_channels, out_channels * 4, kernel_size=1, stride=stride),
-                nn.BatchNorm2d(out_channels * 4),
+                # nn.Conv2d(self.in_channels, out_channels * 4, kernel_size=1, stride=stride),
+                # nn.BatchNorm2d(out_channels * 4),
+                nn.Conv2d(self.in_channels, out_channels * block.expansion, kernel_size=1, stride=stride),
+                nn.BatchNorm2d(out_channels * block.expansion),
             )
 
         layers.append(block(self.in_channels, out_channels, identity_downsample, stride))
-        self.in_channels = out_channels * 4  # 64*4=256
+        self.in_channels = out_channels * block.expansion
+        # self.in_channels = out_channels * 4  # 64*4=256
 
         for i in range(num_residual_blocks - 1):
             layers.append(block(self.in_channels, out_channels))  # 256 -> 64, o/p=64*4
@@ -57,7 +62,7 @@ class ResNet(nn.Module):
 
 
 def ResNet18(in_channels, num_classes=10):
-    return ResNet(Block, [2, 2, 2, 2], in_channels, num_classes)
+    return ResNet(BasicBlock, [2, 2, 2, 2], in_channels, num_classes)
 
 
 def ResNet50(in_channels=3, num_classes=10):
