@@ -69,14 +69,14 @@ def main():
         print("Running on the CPU")
 
     # Load Data
-    if args.dataset == 'TreeCrown512':
-        dataset = ImageFolder("TreeCrown512")
-    elif args.dataset == 'TreeCrown256':
-        dataset = ImageFolder("TreeCrown256")
-    elif args.dataset == 'TreeCrown128':
-        dataset = ImageFolder("TreeCrown128")
+    if args.dataset == 'TreeCrown_512':
+        dataset = ImageFolder("TreeCrown_512")
+    elif args.dataset == 'TreeCrown_256':
+        dataset = ImageFolder("TreeCrown_256")
+    elif args.dataset == 'TreeCrown_128':
+        dataset = ImageFolder("TreeCrown_128")
     else:
-        dataset = ImageFolder("TreeCrown64")
+        dataset = ImageFolder("TreeCrown_64")
     print(f"Dataset is {args.dataset}")
 
     labels = dataset.classes
@@ -199,14 +199,14 @@ def main():
     incorrect_examples.sort(reverse=True, key=lambda x: torch.max(x[2], dim=0).values)
 
     n_images = 48
-    if args.dataset == 'TreeCrown512':
-        classes = os.lisdir('TreeCrown512')
-    elif args.dataset == 'TreeCrown256':
-        classes = os.lisdir('TreeCrown256')
-    elif args.dataset == 'TreeCrown128':
-        classes = os.lisdir('TreeCrown128')
+    if args.dataset == 'TreeCrown_512':
+        classes = os.lisdir('TreeCrown_512')
+    elif args.dataset == 'TreeCrown_256':
+        classes = os.lisdir('TreeCrown_256')
+    elif args.dataset == 'TreeCrown_128':
+        classes = os.lisdir('TreeCrown_128')
     else:
-        classes = os.lisdir('TreeCrown64')
+        classes = os.lisdir('TreeCrown_64')
 
     plot_most_incorrect(incorrect_examples, classes, n_images)
     wandb.save('Most_Conf_Incorrect_Pred.png')
