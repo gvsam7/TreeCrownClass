@@ -1,2 +1,16 @@
+# Ignore Python cache
+__pycache__/
+*.py[cod]
+
+# Ignore zipped datasets
+*.zip
+
+# Ignore dataset folders
+TreeCrown_256/
+
+# Ignore Weights & Biases experiment logs
+wandb/
+
+# Ignore PyCharm project settings
 .idea/
 *.iml
