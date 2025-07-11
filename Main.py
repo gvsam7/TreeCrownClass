@@ -203,14 +203,15 @@ def main():
 
     # n_images = 48
     n_images = min(48, len(incorrect_examples))
-    if args.dataset == 'TreeCrown_512':
+    classes = dataset.classes
+    """if args.dataset == 'TreeCrown_512':
         classes = os.listdir('TreeCrown_512')
     elif args.dataset == 'TreeCrown_256':
         classes = os.listdir('TreeCrown_256')
     elif args.dataset == 'TreeCrown_128':
         classes = os.listdir('TreeCrown_128')
     else:
-        classes = os.listdir('TreeCrown_64')
+        classes = os.listdir('TreeCrown_64')"""
 
     print(f"dataset.classes: {dataset.classes}")
     print(f"classes used in plot: {classes}")
