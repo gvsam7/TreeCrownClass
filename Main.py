@@ -262,7 +262,7 @@ def main():
                     'support': support})
 
     # Append a final row for accuracy
-    df.loc[len(df.index)] = ['Overall Accuracy', '', '', '', test_acc, '']
+    df.loc[len(df.index)] = ['Overall Accuracy', '', '', '', test_acc]
 
     df.to_excel('test.xlsx', sheet_name='sheet1', index=False)
     df.to_csv('test.csv', index=False)
