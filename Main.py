@@ -93,7 +93,6 @@ def main():
     train_ds = Subset(dataset, X_train)
     val_ds = Subset(dataset, X_val)
     test_ds = Subset(dataset, X_test)
-    print(f"len(test_ds): {len(test_ds)}")
 
     # Create train, validation and test datasets
     train_dataset = DataRetrieve(
@@ -111,13 +110,11 @@ def main():
         test_ds,
         transforms=test_transforms(args.width, args.height)
     )
-    print(f"len(test_dataset): {len(test_dataset)}")
 
     # Create train, validation and test dataloaders
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False)
     prediction_loader = DataLoader(test_dataset, batch_size=args.batch_size)
-    print(f"len(prediction_loader.dataset): {len(prediction_loader.dataset)}")
 
     # Network
     model = networks(architecture=args.architecture, in_channels=args.in_channels, num_classes=num_classes,
@@ -204,17 +201,6 @@ def main():
     # n_images = 48
     n_images = min(48, len(incorrect_examples))
     classes = dataset.classes
-    """if args.dataset == 'TreeCrown_512':
-        classes = os.listdir('TreeCrown_512')
-    elif args.dataset == 'TreeCrown_256':
-        classes = os.listdir('TreeCrown_256')
-    elif args.dataset == 'TreeCrown_128':
-        classes = os.listdir('TreeCrown_128')
-    else:
-        classes = os.listdir('TreeCrown_64')"""
-
-    print(f"dataset.classes: {dataset.classes}")
-    print(f"classes used in plot: {classes}")
 
     plot_most_incorrect(incorrect_examples, classes, n_images)
     wandb.save('Most_Conf_Incorrect_Pred.png')
@@ -242,14 +228,6 @@ def main():
     intermediate_tsne_data = get_tsne(intermediates, n_images=n_images)
     plot_representations(intermediate_tsne_data, labels, classes, "INTTSNE", n_images=n_images)
     wandb.save('Intermediate_TSNE.png')
-
-    print(f"Classes (class names): {classes}")
-    print(f"Labels (true labels y_test): {y_test[:10]}")  # print first 10 for brevity
-
-    print(f"y_test shape: {len(y_test)}")
-    print(f"predictions shape: {train_preds.argmax(dim=1).shape}")
-    print(f"First 10 y_test: {y_test[:10]}")
-    print(f"First 10 predictions: {train_preds.argmax(dim=1)[:10]}")
 
     plot_confusion_matrix(y_test, train_preds.argmax(dim=1), classes)
     wandb.save('Confusion_Matrix.png')
