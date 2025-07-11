@@ -240,7 +240,7 @@ def main():
     wandb.save('Confusion_Matrix.png')
 
     # Confusion Matrix
-    wandb.sklearn.plot_confusion_matrix(y_test, train_preds.argmax(dim=1), labels)
+    wandb.sklearn.plot_confusion_matrix(y_test, train_preds.argmax(dim=1), classes)
 
     # Class proportions
     wandb.sklearn.plot_class_proportions(y_train, y_test, labels)
