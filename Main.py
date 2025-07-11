@@ -254,8 +254,14 @@ def main():
     print(f"f1_score: {f1_score}")
     print(f"support: {support}")
 
+    # Use classes as dataset.classes or the label list from y_test's unique classes
+    unique_labels = np.unique(y_test)
+
+    # If I want class names, map unique_labels (indices) to class names
+    class_names = [dataset.classes[i] for i in unique_labels]
+
     # Test data saved in Excel document
-    df = DataFrame({'class': labels,
+    df = DataFrame({'class': class_names,  # labels,
                     'precision': precision,
                     'recall': recall,
                     'f1_score': f1_score,
