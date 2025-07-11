@@ -255,8 +255,15 @@ def main():
     print(f"support: {support}")
 
     # Test data saved in Excel document
-    df = DataFrame({'Test Accuracy': test_acc, 'class': labels, 'precision': precision, 'recall': recall,
-                    'f1_score': f1_score, 'support': support})
+    df = DataFrame({'class': labels,
+                    'precision': precision,
+                    'recall': recall,
+                    'f1_score': f1_score,
+                    'support': support})
+
+    # Append a final row for accuracy
+    df.loc[len(df.index)] = ['Overall Accuracy', '', '', '', test_acc, '']
+
     df.to_excel('test.xlsx', sheet_name='sheet1', index=False)
     df.to_csv('test.csv', index=False)
     compression_opts = dict(method='zip', archive_name='out.csv')
