@@ -93,6 +93,7 @@ def main():
     train_ds = Subset(dataset, X_train)
     val_ds = Subset(dataset, X_val)
     test_ds = Subset(dataset, X_test)
+    print(f"len(test_ds): {len(test_ds)}")
 
     # Create train, validation and test datasets
     train_dataset = DataRetrieve(
@@ -110,11 +111,13 @@ def main():
         test_ds,
         transforms=test_transforms(args.width, args.height)
     )
+    print(f"len(test_dataset): {len(test_dataset)}")
 
     # Create train, validation and test dataloaders
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False)
     prediction_loader = DataLoader(test_dataset, batch_size=args.batch_size)
+    print(f"len(prediction_loader.dataset): {len(prediction_loader.dataset)}")
 
     # Network
     model = networks(architecture=args.architecture, in_channels=args.in_channels, num_classes=num_classes,
