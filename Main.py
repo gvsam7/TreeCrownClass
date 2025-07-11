@@ -198,7 +198,8 @@ def main():
             incorrect_examples.append((image, label, prob))
     incorrect_examples.sort(reverse=True, key=lambda x: torch.max(x[2], dim=0).values)
 
-    n_images = 48
+    # n_images = 48
+    n_images = min(48, len(incorrect_examples))
     if args.dataset == 'TreeCrown_512':
         classes = os.listdir('TreeCrown_512')
     elif args.dataset == 'TreeCrown_256':
