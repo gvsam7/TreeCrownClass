@@ -242,6 +242,11 @@ def main():
     print(f"Classes (class names): {classes}")
     print(f"Labels (true labels y_test): {y_test[:10]}")  # print first 10 for brevity
 
+    print(f"y_test shape: {len(y_test)}")
+    print(f"predictions shape: {train_preds.argmax(dim=1).shape}")
+    print(f"First 10 y_test: {y_test[:10]}")
+    print(f"First 10 predictions: {train_preds.argmax(dim=1)[:10]}")
+
     plot_confusion_matrix(y_test, train_preds.argmax(dim=1), classes)
     wandb.save('Confusion_Matrix.png')
 
