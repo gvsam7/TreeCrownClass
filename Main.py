@@ -212,6 +212,9 @@ def main():
     else:
         classes = os.listdir('TreeCrown_64')
 
+    print(f"dataset.classes: {dataset.classes}")
+    print(f"classes used in plot: {classes}")
+
     plot_most_incorrect(incorrect_examples, classes, n_images)
     wandb.save('Most_Conf_Incorrect_Pred.png')
 
