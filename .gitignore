@@ -22,8 +22,10 @@ wandb/
 # Ignore Saved Images
 *.PNG
 
-# Allow specific files in plots/
-!plots/
-plots/*.py
+# Ignore specific plots outputs
+plots/*.png
+plots/*.csv
+plots/
+
+# But still allow:
 !plots/ModelExam.py
-!plots/*.png
