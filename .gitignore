@@ -8,6 +8,10 @@ __pycache__/
 # Ignore dataset folders
 TreeCrown_256/
 
+# Ignore DataProcess folders
+DataProcess/
+
+
 # Ignore Weights & Biases experiment logs
 wandb/
 
@@ -17,3 +21,9 @@ wandb/
 
 # Ignore Saved Images
 *.PNG
+
+# Allow specific files in plots/
+!plots/
+plots/*.py
+!plots/ModelExam.py
+!plots/*.png
