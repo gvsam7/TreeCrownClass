@@ -204,7 +204,8 @@ def main():
         metadata=metadata,
         class_names=dataset.classes
     )
-    wandb.save("predicted_metadata.geojson")
+    # wandb.save("predicted_metadata.geojson")
+    wandb.log_artifact("predicted_metadata.geojson", type="geojson")
 
     # Most Confident Incorrect Predictions
     images, labels, probs = get_predictions(model, prediction_loader, device)
