@@ -12,6 +12,7 @@ import pandas as pd
 def export_prediction_geojson(
     predictions,
     confidences,
+    prediction_filenames,
     metadata,
     class_names,
     output_path="predicted_metadata.geojson",
@@ -26,7 +27,8 @@ def export_prediction_geojson(
 
     # Build a results dataframe with filenames as keys
     results_df = pd.DataFrame({
-        "filename": metadata["filename"].values,  # use filename as the join key
+        # "filename": metadata["filename"].values,  # use filename as the join key
+        "filename": prediction_filenames,
         "predicted_class": [int(p.item()) for p in predictions],
         "confidence": [round(float(c.item()), 4) for c in confidences]
     })
