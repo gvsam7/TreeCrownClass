@@ -198,10 +198,16 @@ def main():
     confidences = probs.max(dim=1).values
     print(f"pred_labels: {pred_labels}")
 
+    # Filter metadata to match test set
+    test_filenames = [os.path.basename(dataset.samples[i][0]) for i in X_test]
+    metadata["filename"] = metadata["filename"].apply(os.path.basename)
+    test_metadata = metadata[metadata["filename"].isin(test_filenames)].copy()
+
+    # Export using test_metadata
     export_prediction_geojson(
         predictions=pred_labels,
         confidences=confidences,
-        metadata=metadata,
+        metadata=test_metadata,
         class_names=dataset.classes
     )
     wandb.save("predicted_metadata.geojson")
