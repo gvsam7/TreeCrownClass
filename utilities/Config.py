@@ -1,5 +1,69 @@
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
+import os
+import numpy as np
+import rasterio
+from rasterio.transform import from_bounds
+import json
+from shapely.geometry import mapping
+
+
+def export_prediction_geojson(predictions, metadata, output_path="predicted_metadata.geojson"):
+    features = []
+
+    for i in range(len(predictions)):
+        pred_class = int(predictions[i].item())
+        meta_row = metadata.iloc[i]
+
+        features.append({
+            "type": "Feature",
+            "properties": {
+                "filename": meta_row["filename"],
+                "predicted_class": pred_class
+            },
+            "geometry": mapping(meta_row.geometry)
+        })
+
+    geojson = {
+        "type": "FeatureCollection",
+        "crs": {
+            "type": "name",
+            "properties": {
+                "name": "EPSG:32630"
+            }
+        },
+        "features": features
+    }
+
+    with open(output_path, "w") as f:
+        json.dump(geojson, f)
+
+    print(f"✅ Vector prediction metadata saved to {output_path}")
+
+"""
+def export_georeferenced_predictions(predictions, metadata, output_dir, patch_size, crs="EPSG:32630"):
+    for i in range(predictions.shape[0]):
+        pred_class = predictions[i].argmax().item()
+        meta_row = metadata.iloc[i]
+        bounds = meta_row.geometry.bounds  # (xmin, ymin, xmax, ymax)
+        filename = os.path.basename(meta_row["filename"]).replace(".png", ".tif")
+        output_path = os.path.join(output_dir, filename)
+
+        pred_array = np.full((patch_size[1], patch_size[0]), pred_class, dtype=np.uint8)
+        transform = from_bounds(*bounds, patch_size[0], patch_size[1])
+
+        with rasterio.open(
+            output_path,
+            "w",
+            driver="GTiff",
+            height=patch_size[1],
+            width=patch_size[0],
+            count=1,
+            dtype=pred_array.dtype,
+            crs=crs,
+            transform=transform,
+        ) as dst:
+            dst.write(pred_array, 1)"""
 
 
 def train_transforms(width, height, augmentation):

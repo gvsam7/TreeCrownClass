@@ -23,12 +23,21 @@ from sklearn.metrics import precision_recall_fscore_support as score
 from sklearn.metrics import accuracy_score
 import wandb
 import os
+import geopandas as gpd
 from utilities.Save import save_checkpoint, load_checkpoint
 from utilities.Data import DataRetrieve
 from utilities.Config import train_transforms, val_transforms, test_transforms
 from utilities.Networks import networks
 from utilities.Hyperparameters import arguments
 from plots.ModelExam import parameters, get_predictions, plot_confusion_matrix, plot_most_incorrect, get_representations, get_pca, plot_representations, get_tsne
+from utilities.Config import export_prediction_geojson
+
+
+# Load Metadata
+metadata = gpd.read_file("patch_metadata.geojson")
+
+# Create Output Folder
+os.makedirs("Georeferenced_Predictions", exist_ok=True)
 
 
 def step(data, targets, model, optimizer, criterion, train):
@@ -182,6 +191,13 @@ def main():
     print(f"Train predictions shape: {train_preds.shape}")
     print(f"The label the network predicts strongly: {train_preds.argmax(dim=1)}")
     predictions = train_preds.argmax(dim=1)
+
+    # Export Georeferenced Predictions
+    export_prediction_geojson(
+        predictions=predictions,
+        metadata=metadata,
+    )
+    wandb.save("predicted_metadata.geojson")
 
     # Most Confident Incorrect Predictions
     images, labels, probs = get_predictions(model, prediction_loader, device)
