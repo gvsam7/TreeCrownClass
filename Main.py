@@ -88,24 +88,27 @@ def main():
         dataset = ImageFolder("TreeCrown_64")
     print(f"Dataset is {args.dataset}")
 
-    # Normalise metadata filenames
-    metadata["filename"] = metadata["filename"].apply(lambda x: os.path.normpath(str(x)))
+    # Get all image filenames from the dataset folder
+    dataset_folder = args.dataset  # e.g. "TreeCrown_128"
+    dataset_files = set(os.listdir(dataset_folder))  # assumes flat structure
 
-    # Build full paths to check existence
-    metadata["full_path"] = metadata["filename"].apply(lambda x: os.path.join(args.dataset, x))
+    # Extract basenames from metadata
+    metadata_filenames = set(os.path.basename(str(x)) for x in metadata["filename"])
 
-    # Check existence
-    metadata["exists"] = metadata["full_path"].apply(os.path.exists)
+    # Compare sets
+    missing_in_dataset = metadata_filenames - dataset_files
+    extra_in_dataset = dataset_files - metadata_filenames
+    matched = metadata_filenames & dataset_files
 
-    # Summary
-    missing_count = (~metadata["exists"]).sum()
-    print(f"✅ Metadata entries: {len(metadata)}")
-    print(f"❌ Missing files in dataset: {missing_count}")
+    print(f"✅ Matching files: {len(matched)}")
+    print(f"❌ Metadata files missing in dataset folder: {len(missing_in_dataset)}")
+    print(f"⚠️ Dataset files not referenced in metadata: {len(extra_in_dataset)}")
 
-    # Optional: show a few missing
-    if missing_count > 0:
-        print("❌ Example missing files:")
-        print(metadata.loc[~metadata["exists"], "full_path"].head(5).to_list())
+    # Optional: show examples
+    if missing_in_dataset:
+        print("❌ Example missing:", list(missing_in_dataset)[:3])
+    if extra_in_dataset:
+        print("⚠️ Example extra:", list(extra_in_dataset)[:3])
 
     labels = dataset.classes
     num_classes = len(labels)
