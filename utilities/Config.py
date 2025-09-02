@@ -6,61 +6,84 @@ import rasterio
 from rasterio.transform import from_bounds
 import json
 from shapely.geometry import mapping
-import pandas as pd
 
 
 def export_prediction_geojson(
     predictions,
     confidences,
-    prediction_filenames,
     metadata,
     class_names,
     output_path="predicted_metadata.geojson",
     crs=None,
     log_to_wandb=True,
 ):
-    # Map classes to species
+    import os
+    from collections import Counter
+
+    features = []
+
+    # Infer species from filename path if not already present
+    if "species" not in metadata.columns:
+        metadata["species"] = metadata["filename"].apply(
+            lambda x: os.path.basename(os.path.dirname(x))
+        )
+
+    # Use training class-to-species mapping
     class_to_species = {i: species for i, species in enumerate(class_names)}
-    print(f"metadata filenames: {len(metadata['filename'])}")
-    print(f"predictions: {len(predictions)}")
-    print(f"confidences: {len(confidences)}")
 
-    # Build a results dataframe with filenames as keys
-    results_df = pd.DataFrame({
-        # "filename": metadata["filename"].values,  # use filename as the join key
-        "filename": prediction_filenames,
-        "predicted_class": [int(p.item()) for p in predictions],
-        "confidence": [round(float(c.item()), 4) for c in confidences]
-    })
-    results_df["predicted_species"] = results_df["predicted_class"].map(class_to_species)
+    # 🔍 Debug: Check alignment assumptions
+    print(f"🔍 metadata rows: {len(metadata)}")
+    print(f"🔍 predictions: {len(predictions)}")
+    print(f"🔍 confidences: {len(confidences)}")
 
-    # Merge predictions back into metadata
-    merged = metadata.merge(results_df, on="filename", how="left")
+    if len(metadata) != len(predictions):
+        print("⚠️ Warning: metadata and predictions are not the same length. Assuming row-wise alignment.")
+        metadata = metadata.iloc[:len(predictions)].copy()
 
-    # Ensure CRS
+    predicted_species_list = []
+
+    for i in range(len(predictions)):
+        pred_class = int(predictions[i].item())
+        species_name = class_to_species.get(pred_class, "unknown")
+        meta_row = metadata.iloc[i]
+        confidence = round(confidences[i].item(), 4)
+
+        # 🔍 Debug: Print sample alignment
+        if i < 5 or i == len(predictions) - 1:
+            print(f"[{i}] filename: {meta_row['filename']} → predicted_class: {pred_class} → predicted_species: {species_name} → confidence: {confidence}")
+
+        predicted_species_list.append(species_name)
+
+        features.append({
+            "type": "Feature",
+            "properties": {
+                "filename": meta_row["filename"],
+                "predicted_class": pred_class,
+                "predicted_species": species_name,
+                "confidence": confidence
+            },
+            "geometry": mapping(meta_row.geometry)
+        })
+
+    # 🔍 Debug: Summary of predicted species
+    species_counts = Counter(predicted_species_list)
+    print("🔍 Predicted species distribution:")
+    for species, count in species_counts.items():
+        print(f"   {species}: {count}")
+
+    # Determine CRS
     if crs is None:
         if hasattr(metadata, "crs") and metadata.crs is not None:
             crs = str(metadata.crs)
         else:
-            crs = "EPSG:32630"  # fallback
-
-    # Build GeoJSON
-    features = []
-    for _, row in merged.iterrows():
-        features.append({
-            "type": "Feature",
-            "properties": {
-                "filename": row["filename"],
-                "predicted_class": int(row["predicted_class"]),
-                "predicted_species": row["predicted_species"],
-                "confidence": row["confidence"]
-            },
-            "geometry": mapping(row.geometry)
-        })
+            crs = "EPSG:32630"  # fallback if not available
 
     geojson = {
         "type": "FeatureCollection",
-        "crs": {"type": "name", "properties": {"name": crs}},
+        "crs": {
+            "type": "name",
+            "properties": {"name": crs}
+        },
         "features": features
     }
 
@@ -68,7 +91,6 @@ def export_prediction_geojson(
         json.dump(geojson, f)
 
     print(f"✅ Vector prediction metadata saved to {output_path}")
-
 
 """
 def export_prediction_geojson(

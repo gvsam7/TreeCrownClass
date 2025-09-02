@@ -19,10 +19,9 @@ def get_predictions(model, iterator, device):
     images = []
     labels = []
     probs = []
-    filenames = []  # for geojson
 
     with torch.no_grad():
-        for data, targets, batch_filenames in iterator:  # batch_filenames: geojson
+        for data, targets in iterator:
             data = data.to(device=device)
             y_pred = model(data)
 
@@ -32,13 +31,12 @@ def get_predictions(model, iterator, device):
             images.append(data.cpu())
             labels.append(targets.cpu())
             probs.append(y_prob.cpu())
-            filenames.extend(batch_filenames)
 
     images = torch.cat(images, dim=0)
     labels = torch.cat(labels, dim=0)
     probs = torch.cat(probs, dim=0)
 
-    return images, labels, probs, filenames
+    return images, labels, probs
 
 
 def normalize_image(image):
