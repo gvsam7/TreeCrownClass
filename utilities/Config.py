@@ -20,6 +20,9 @@ def export_prediction_geojson(
 ):
     # Map classes to species
     class_to_species = {i: species for i, species in enumerate(class_names)}
+    print(f"metadata filenames: {len(metadata['filename'])}")
+    print(f"predictions: {len(predictions)}")
+    print(f"confidences: {len(confidences)}")
 
     # Build a results dataframe with filenames as keys
     results_df = pd.DataFrame({
