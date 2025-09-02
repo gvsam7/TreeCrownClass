@@ -15,17 +15,9 @@ def export_prediction_geojson(predictions, confidences, metadata, output_path="p
     if "species" not in metadata.columns:
         metadata["species"] = metadata["filename"].apply(lambda x: x.split("\\")[1])
 
-    # Build class-to-species mapping from metadata
-    if "label" in metadata.columns:
-        class_to_species = (
-            metadata[["label", "species"]]
-            .drop_duplicates()
-            .sort_values("label")
-            .set_index("label")["species"]
-            .to_dict()
-        )
-    else:
-        raise ValueError("Metadata must contain 'label' column to resolve species names.")
+    # Build class-to-species mapping based on prediction order
+    unique_species = metadata["species"].unique().tolist()
+    class_to_species = {i: species for i, species in enumerate(unique_species)}
 
     for i in range(len(predictions)):
         pred_class = int(predictions[i].item())
