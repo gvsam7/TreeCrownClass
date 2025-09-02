@@ -228,10 +228,26 @@ def main():
     print("Sample from dataset:", dataset.samples[X_test[0]][0])
     print("Sample from metadata:", metadata["filename"].iloc[0])
 
-    # Filter metadata to match test set
+    # Build filename → metadata row mapping
+    metadata_index = {
+        os.path.basename(str(row["filename"])): idx
+        for idx, row in metadata.iterrows()
+    }
+
+    # Extract filenames from test set
     test_filenames = [os.path.basename(dataset.samples[i][0]) for i in X_test]
-    metadata["filename"] = metadata["filename"].apply(os.path.basename)
-    test_metadata = metadata[metadata["filename"].isin(test_filenames)].copy()
+
+    # Reorder metadata to match prediction order
+    ordered_metadata = []
+    for fname in test_filenames:
+        if fname in metadata_index:
+            ordered_metadata.append(metadata.iloc[metadata_index[fname]])
+        else:
+            print(f"⚠️ Filename not found in metadata: {fname}")
+            ordered_metadata.append(None)  # or skip, depending on your export logic
+
+    # Convert to DataFrame
+    test_metadata = gpd.GeoDataFrame(ordered_metadata).dropna().reset_index(drop=True)
 
     # Export using test_metadata
     export_prediction_geojson(
