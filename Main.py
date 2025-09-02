@@ -193,9 +193,15 @@ def main():
     predictions = train_preds.argmax(dim=1)
 
     # Export Georeferenced Predictions
+    images, labels, probs = get_predictions(model, prediction_loader, device)
+    pred_labels = torch.argmax(probs, dim=1)
+    confidences = probs.max(dim=1).values
+    print(f"pred_labels: {pred_labels}")
+
     export_prediction_geojson(
-        predictions=predictions,
-        metadata=metadata,
+        predictions=pred_labels,
+        confidences=confidences,
+        metadata=metadata
     )
     wandb.save("predicted_metadata.geojson")
 

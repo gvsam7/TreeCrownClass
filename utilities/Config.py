@@ -11,6 +11,57 @@ from shapely.geometry import mapping
 def export_prediction_geojson(predictions, metadata, output_path="predicted_metadata.geojson"):
     features = []
 
+    # Infer species from filename path if not already present
+    if "species" not in metadata.columns:
+        metadata["species"] = metadata["filename"].apply(lambda x: x.split("\\")[1])
+
+    # Build class-to-species mapping from metadata
+    if "label" in metadata.columns:
+        class_to_species = (
+            metadata[["label", "species"]]
+            .drop_duplicates()
+            .sort_values("label")
+            .set_index("label")["species"]
+            .to_dict()
+        )
+    else:
+        raise ValueError("Metadata must contain 'label' column to resolve species names.")
+
+    for i in range(len(predictions)):
+        pred_class = int(predictions[i].item())
+        species_name = class_to_species.get(pred_class, "unknown")
+        meta_row = metadata.iloc[i]
+
+        features.append({
+            "type": "Feature",
+            "properties": {
+                "filename": meta_row["filename"],
+                "predicted_class": pred_class,
+                "predicted_species": species_name
+            },
+            "geometry": mapping(meta_row.geometry)
+        })
+
+    geojson = {
+        "type": "FeatureCollection",
+        "crs": {
+            "type": "name",
+            "properties": {
+                "name": "EPSG:32630"
+            }
+        },
+        "features": features
+    }
+
+    with open(output_path, "w") as f:
+        json.dump(geojson, f)
+
+    print(f"✅ Vector prediction metadata saved to {output_path}")
+
+"""
+def export_prediction_geojson(predictions, metadata, output_path="predicted_metadata.geojson"):
+    features = []
+
     for i in range(len(predictions)):
         pred_class = int(predictions[i].item())
         meta_row = metadata.iloc[i]
@@ -38,7 +89,7 @@ def export_prediction_geojson(predictions, metadata, output_path="predicted_meta
     with open(output_path, "w") as f:
         json.dump(geojson, f)
 
-    print(f"✅ Vector prediction metadata saved to {output_path}")
+    print(f"✅ Vector prediction metadata saved to {output_path}")"""
 
 """
 def export_georeferenced_predictions(predictions, metadata, output_dir, patch_size, crs="EPSG:32630"):
