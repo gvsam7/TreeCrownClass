@@ -201,7 +201,8 @@ def main():
     export_prediction_geojson(
         predictions=pred_labels,
         confidences=confidences,
-        metadata=metadata
+        metadata=metadata,
+        class_names=dataset.classes
     )
     wandb.save("predicted_metadata.geojson")
 

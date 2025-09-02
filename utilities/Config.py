@@ -8,7 +8,7 @@ import json
 from shapely.geometry import mapping
 
 
-def export_prediction_geojson(predictions, confidences, metadata, output_path="predicted_metadata.geojson"):
+def export_prediction_geojson(predictions, confidences, metadata, class_names, output_path="predicted_metadata.geojson"):
     features = []
 
     # Infer species from filename path if not already present
@@ -16,8 +16,10 @@ def export_prediction_geojson(predictions, confidences, metadata, output_path="p
         metadata["species"] = metadata["filename"].apply(lambda x: x.split("\\")[1])
 
     # Build class-to-species mapping based on prediction order
-    unique_species = metadata["species"].unique().tolist()
-    class_to_species = {i: species for i, species in enumerate(unique_species)}
+    # unique_species = metadata["species"].unique().tolist()
+    # class_to_species = {i: species for i, species in enumerate(unique_species)}
+    # Use the exact class-to-species mapping from training
+    class_to_species = {i: species for i, species in enumerate(class_names)}
 
     for i in range(len(predictions)):
         pred_class = int(predictions[i].item())
