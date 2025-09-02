@@ -198,6 +198,10 @@ def main():
     confidences = probs.max(dim=1).values
     print(f"pred_labels: {pred_labels}")
 
+    # Diagnostic: Inspect filename format
+    print("Sample from dataset:", dataset.samples[X_test[0]][0])
+    print("Sample from metadata:", metadata["filename"].iloc[0])
+
     # Filter metadata to match test set
     test_filenames = [os.path.basename(dataset.samples[i][0]) for i in X_test]
     metadata["filename"] = metadata["filename"].apply(os.path.basename)
