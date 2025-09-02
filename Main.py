@@ -88,6 +88,25 @@ def main():
         dataset = ImageFolder("TreeCrown_64")
     print(f"Dataset is {args.dataset}")
 
+    # Normalise metadata filenames
+    metadata["filename"] = metadata["filename"].apply(lambda x: os.path.normpath(str(x)))
+
+    # Build full paths to check existence
+    metadata["full_path"] = metadata["filename"].apply(lambda x: os.path.join(args.dataset, x))
+
+    # Check existence
+    metadata["exists"] = metadata["full_path"].apply(os.path.exists)
+
+    # Summary
+    missing_count = (~metadata["exists"]).sum()
+    print(f"✅ Metadata entries: {len(metadata)}")
+    print(f"❌ Missing files in dataset: {missing_count}")
+
+    # Optional: show a few missing
+    if missing_count > 0:
+        print("❌ Example missing files:")
+        print(metadata.loc[~metadata["exists"], "full_path"].head(5).to_list())
+
     labels = dataset.classes
     num_classes = len(labels)
     y = dataset.targets
