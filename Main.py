@@ -90,7 +90,11 @@ def main():
 
     # Get all image filenames from the dataset folder
     dataset_folder = args.dataset  # e.g. "TreeCrown_128"
-    dataset_files = set(os.listdir(dataset_folder))  # assumes flat structure
+    dataset_files = set()
+    for root, _, files in os.walk(dataset_folder):
+        for f in files:
+            if f.lower().endswith(".png"):
+                dataset_files.add(f)
 
     # Extract basenames from metadata
     metadata_filenames = set(os.path.basename(str(x)) for x in metadata["filename"])
