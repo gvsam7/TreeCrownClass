@@ -34,7 +34,7 @@ from utilities.Config import export_prediction_geojson
 
 
 # Load Metadata
-metadata = gpd.read_file("patch_metadata.geojson")
+metadata = gpd.read_file("Test_patch_metadata.geojson")
 
 # Create Output Folder
 os.makedirs("Georeferenced_Predictions", exist_ok=True)
@@ -84,6 +84,8 @@ def main():
         dataset = ImageFolder("TreeCrown_256")
     elif args.dataset == 'TreeCrown_128':
         dataset = ImageFolder("TreeCrown_128")
+    elif args.dataset == 'Test_TreeCrown_128':
+        dataset = ImageFolder("Test_TreeCrown_128")
     else:
         dataset = ImageFolder("TreeCrown_64")
     print(f"Dataset is {args.dataset}")
