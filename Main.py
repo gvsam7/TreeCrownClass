@@ -29,7 +29,7 @@ from utilities.Data import DataRetrieve
 from utilities.Config import train_transforms, val_transforms, test_transforms
 from utilities.Networks import networks
 from utilities.Hyperparameters import arguments
-from plots.ModelExam import parameters, get_predictions, plot_confusion_matrix, plot_most_incorrect, get_representations, get_pca, plot_representations, get_tsne
+from plots.ModelExam import parameters, get_predictions, plot_confusion_matrix, plot_confusion_matrix_proportions, plot_most_incorrect, get_representations, get_pca, plot_representations, get_tsne
 from utilities.Config import export_prediction_geojson
 
 
@@ -307,8 +307,13 @@ def main():
     plot_representations(intermediate_tsne_data, labels, classes, "INTTSNE", n_images=n_images)
     wandb.save('Intermediate_TSNE.png')
 
+    # Confusion Matrix
     plot_confusion_matrix(y_test, train_preds.argmax(dim=1), classes)
     wandb.save('Confusion_Matrix.png')
+
+    # Confusion Matrix Proportions
+    plot_confusion_matrix_proportions(y_test, train_preds.argmax(dim=1), classes)
+    wandb.save('Confusion_Matrix_Proportions.png')
 
     # Confusion Matrix
     wandb.sklearn.plot_confusion_matrix(y_test, train_preds.argmax(dim=1), labels)

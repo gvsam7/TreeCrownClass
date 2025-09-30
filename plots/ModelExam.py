@@ -58,6 +58,23 @@ def plot_confusion_matrix(labels, pred_labels, classes):
     fig.savefig("Confusion_Matrix", bbox_inches='tight')
 
 
+def plot_confusion_matrix_proportions(labels, pred_labels, classes, normalize='true'):
+    """
+    - labels: Ground truth labels
+    - pred_labels: Predicted labels
+    - classes: List of classes names
+    - normalize: 'true' for row-wise (per-class), 'pred' for coloumn-wise, 'all' for global proportions
+    """
+    fig = plt.figure(figsize=(10, 10))
+    ax = fig.add_subplot(1, 1, 1)
+
+    cm = confusion_matrix(labels, pred_labels, normalize=normalize)
+    cm_display = ConfusionMatrixDisplay(cm, display_labels=classes)
+    cm_display.plot(values_format=".2f", cmap='Blues', ax=ax)
+    plt.xticks(rotation=45)
+    fig.savefig("Confusion_Matrix_Proportions", bbox_inches='tight')
+
+
 def plot_most_incorrect(incorrect, classes, n_images, normalize=True):
     rows = int(np.sqrt(n_images))
     cols = int(np.sqrt(n_images))
