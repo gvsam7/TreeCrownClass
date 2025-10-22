@@ -23,6 +23,7 @@ def arguments():
     parser.add_argument("--dataset", default="mixed", help="TreeCrown_512, TreeCrown_256, TreeCrown_128, "
                                                            "Test_TreeCrown_128, TreeCrown_64")
     parser.add_argument("--architecture", default="resnet18", help="resnet18=ResNet18, resnet50=ResNet50, "
-                                                                   "resnet101=ResNet101, efficientnet=EfficientNet")
+                                                                   "resnet101=ResNet101, efficientnet=EfficientNet,"
+                                                                   "densenet=DenseNet")
 
     return parser.parse_args()
