@@ -126,6 +126,16 @@ class EfficientNet(nn.Module):
 
         # pretrained loading left to caller (see earlier helper if needed)
 
+    def calculate_factors(self, version, alpha=1.2, beta=1.1):
+        """
+        Returns (width_factor, depth_factor, dropout_rate) for a given version key.
+        Must be indented inside the EfficientNet class.
+        """
+        phi, res, drop_rate = phi_values[version]
+        depth_factor = alpha ** phi
+        width_factor = beta ** phi
+        return width_factor, depth_factor, drop_rate
+
     def create_features(self, width_factor, depth_factor, last_channels, in_channels=3):
         init_channels = int(32 * width_factor)
         # use the provided in_channels here
@@ -133,7 +143,7 @@ class EfficientNet(nn.Module):
         in_c = init_channels
 
         for expand_ratio, c, repeats, stride, kernel_size in base_model:
-            out_channels = 4 * ceil(int(c * width_factor) / 4)
+            out_channels = int(4 * ceil(int(c * width_factor) / 4))
             layers_repeats = int(ceil(repeats * depth_factor))
 
             for layer in range(layers_repeats):
