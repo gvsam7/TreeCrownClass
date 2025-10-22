@@ -153,10 +153,19 @@ def main():
     val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False)
     prediction_loader = DataLoader(test_dataset, batch_size=args.batch_size)
 
+    vit_cfg = dict(
+        img_size=args.vit_img_size,
+        patch_size=args.vit_patch_size,
+        hidden_size=args.vit_hidden_size,
+        num_layers=args.vit_layers,
+        num_heads=args.vit_num_heads
+    )
+
     # Network
     model = networks(architecture=args.architecture, in_channels=args.in_channels, num_classes=num_classes,
                      pretrained=args.pretrained, requires_grad=args.requires_grad,
-                     global_pooling=args.global_pooling, version=args.version).to(device)
+                     global_pooling=args.global_pooling, version=args.version,
+                     vit_cfg=vit_cfg).to(device)
     print(model)
     n_parameters = parameters(model)
     print(f"The model has {n_parameters:,} trainable parameters")

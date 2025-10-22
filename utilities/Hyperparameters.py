@@ -24,6 +24,11 @@ def arguments():
                                                            "Test_TreeCrown_128, TreeCrown_64")
     parser.add_argument("--architecture", default="resnet18", help="resnet18=ResNet18, resnet50=ResNet50, "
                                                                    "resnet101=ResNet101, efficientnet=EfficientNet,"
-                                                                   "densenet=DenseNet")
+                                                                   "densenet=DenseNet, vit=ViT")
+    parser.add_argument("--vit_img_size", type=int, default=128)
+    parser.add_argument("--vit_patch_size", type=int, default=16)
+    parser.add_argument("--vit_hidden_size", type=int, default=128)
+    parser.add_argument("--vit_layers", type=int, default=4)
+    parser.add_argument("--vit_num_heads", type=int, default=8)
 
     return parser.parse_args()
