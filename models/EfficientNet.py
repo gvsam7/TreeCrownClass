@@ -162,3 +162,9 @@ class EfficientNet(nn.Module):
         features.append(CNNBlock(in_c, last_channels, kernel_size=1, stride=1, padding=0))
         return nn.Sequential(*features)
 
+    def forward(self, x):
+        x = self.pool(self.features(x))
+        x = x.view(x.size(0), -1)
+        return self.classifier(x)
+
+
