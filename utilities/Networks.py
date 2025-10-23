@@ -1,5 +1,7 @@
 import torchvision
 from torch import nn
+import torch
+import torch.nn.functional as F
 from models.ResNet import ResNet18, ResNet50, ResNet101, ResNet152
 from models.EfficientNet import EfficientNet
 from models.ViT import ViT
@@ -75,6 +77,17 @@ def networks(architecture, in_channels, num_classes, pretrained, requires_grad, 
 
         # replace classifier head
         model.classifier = nn.Linear(model.classifier.in_features, num_classes)
+
+        def custom_forward(self, x):
+            features = self.features(x)
+            out = F.relu(features, inplace=False)  # ← safe mutation
+            out = F.adaptive_avg_pool2d(out, (1, 1))
+            out = torch.flatten(out, 1)
+            out = self.classifier(out)
+            return out
+
+        # Bind the new forward method
+        model.forward = custom_forward.__get__(model, model.__class__)
     elif architecture == 'vit':
         cfg = vit_cfg or {}
         model = ViT(
