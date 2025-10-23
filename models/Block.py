@@ -77,10 +77,17 @@ class DACBlock(nn.Module):
         # self.relu = nn.ReLU(True)
         self.relu = nn.ReLU(inplace=False)
 
+        # NEW: projection layer to restore original channel count
+        self.project = nn.Conv2d(out_planes, in_planes, kernel_size=1)
+
     def forward(self, x):
         x1 = self.conv1(x)
         x3 = self.conv3(x)
         x6 = self.conv6(x)
         x9 = self.conv9(x)
         x_t = x1 + (x3 + x6 + x9)/3
-        return self.relu(self.bn(x_t))
+        # return self.relu(self.bn(x_t))
+        x_t = self.bn(x_t)
+        x_t = self.relu(x_t)
+        x_t = self.project(x_t)  # ← restore to in_planes (e.g. 2208)
+        return x_t
