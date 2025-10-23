@@ -68,7 +68,7 @@ def networks(architecture, in_channels, num_classes, pretrained, requires_grad, 
         print(f"Replaced {n_replaced} pooling layers with MixPool")
 
         # append averaged dilated conv block (keeps channel count)
-        model.features.add_module('avg_dilated', DACBlock(orig_out))
+        model.features.add_module('avg_dilated', DACBlock(orig_out, out_planes=orig_out))
 
         # replace classifier head
         model.classifier = nn.Linear(model.classifier.in_features, num_classes)
