@@ -89,6 +89,29 @@ class GaborConv2d(nn.Module):
         return self.conv(input_tensor)
 
     def calculate_weights(self):
+        device = self.conv.weight.device
+        dtype = self.conv.weight.dtype
+
+        kH, kW = self.kernel_size
+        for i in range(self.conv.out_channels):
+            for j in range(self.conv.in_channels):
+                sigma = self.sigma[i, j].expand(kH, kW).to(device=device, dtype=dtype)
+                freq = self.freq[i, j].expand(kH, kW).to(device=device, dtype=dtype)
+                theta = self.theta[i, j].expand(kH, kW).to(device=device, dtype=dtype)
+                psi = self.psi[i, j].expand(kH, kW).to(device=device, dtype=dtype)
+
+                rotx = self.x * torch.cos(theta) + self.y * torch.sin(theta)
+                roty = -self.x * torch.sin(theta) + self.y * torch.cos(theta)
+
+                g = torch.exp(-0.5 * ((rotx ** 2 + roty ** 2) / (sigma + self.delta) ** 2))
+                g = g * torch.cos(freq * rotx + psi)
+                g = g / (2 * math.pi * sigma ** 2)
+
+                # safe assignment: no-grad copy_ to avoid breaking autograd graph
+                with torch.no_grad():
+                    self.conv.weight[i, j].copy_(g.to(device=device, dtype=dtype))
+
+    """def calculate_weights(self):
         for i in range(self.conv.out_channels):
             for j in range(self.conv.in_channels):
                 sigma = self.sigma[i, j].expand_as(self.y)
@@ -104,4 +127,4 @@ class GaborConv2d(nn.Module):
                 )
                 g = g * torch.cos(freq * rotx + psi)
                 g = g / (2 * math.pi * sigma ** 2)
-                self.conv.weight.data[i, j] = g
+                self.conv.weight.data[i, j] = g"""
