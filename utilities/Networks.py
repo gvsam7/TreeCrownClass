@@ -67,8 +67,11 @@ def networks(architecture, in_channels, num_classes, pretrained, requires_grad, 
         n_replaced = replace_with_mixpool(model, alpha=0.6, learnable=False)
         print(f"Replaced {n_replaced} pooling layers with MixPool")
 
+        # determine channel count at features output (what classifier expects)
+        final_feat_ch = model.classifier.in_features  # DenseNet uses this = 2208 for densenet161
+
         # append averaged dilated conv block (keeps channel count)
-        model.features.add_module('avg_dilated', DACBlock(orig_out, out_planes=orig_out))
+        model.features.add_module('avg_dilated', DACBlock(orig_out, out_planes=final_feat_ch))
 
         # replace classifier head
         model.classifier = nn.Linear(model.classifier.in_features, num_classes)
