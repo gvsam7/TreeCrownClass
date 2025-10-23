@@ -54,14 +54,14 @@ def networks(architecture, in_channels, num_classes, pretrained, requires_grad, 
         # get original conv out channels BEFORE replacing conv
         orig_out = model.features.conv0.out_channels
 
-        model.features.conv0 = GaborConv2d(
+        """model.features.conv0 = GaborConv2d(
             in_channels=in_channels,
             out_channels=orig_out,
             kernel_size=3,
             stride=1,
             padding=1,
             bias=False
-        )
+        )"""
 
         # replace pooling layers with MixPool
         n_replaced = replace_with_mixpool(model, alpha=0.6, learnable=False)
