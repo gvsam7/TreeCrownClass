@@ -75,7 +75,7 @@ class DACBlock(nn.Module):
         self.conv9 = nn.Conv2d(in_planes, out_planes, kernel_size=3, padding='same', stride=1, dilation=9)
         self.bn = nn.BatchNorm2d(out_planes)
         # self.relu = nn.ReLU(True)
-        self.relu = nn.ReLU(False)
+        self.relu = nn.ReLU(inplace=False)
 
     def forward(self, x):
         x1 = self.conv1(x)
