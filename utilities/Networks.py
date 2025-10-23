@@ -86,6 +86,15 @@ def networks(architecture, in_channels, num_classes, pretrained, requires_grad, 
 
         # replace classifier head
         model.classifier = nn.Linear(model.classifier.in_features, num_classes)
+
+        def disable_inplace_relu(module):
+            for name, child in module.named_children():
+                if isinstance(child, nn.ReLU) and child.inplace:
+                    setattr(module, name, nn.ReLU(inplace=False))
+                else:
+                    disable_inplace_relu(child)
+
+        disable_inplace_relu(model.features)
     elif architecture == 'vit':
         cfg = vit_cfg or {}
         model = ViT(
