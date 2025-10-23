@@ -83,4 +83,7 @@ class DACBlock(nn.Module):
         x6 = self.conv6(x)
         x9 = self.conv9(x)
         x_t = x1 + (x3 + x6 + x9)/3
-        return self.relu(self.bn(x_t))
+        # return self.relu(self.bn(x_t))
+        out = self.bn(x_t)
+        out = self.relu(out)
+        return out.clone()  # <- force clone to break shared reference
