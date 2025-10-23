@@ -1,5 +1,4 @@
 import torch.nn as nn
-import torch
 
 
 class Block(nn.Module):
@@ -67,7 +66,7 @@ class BasicBlock(nn.Module):
         return x
 
 
-"""class DACBlock(nn.Module):
+class DACBlock(nn.Module):
     def __init__(self, in_planes, out_planes):
         super(DACBlock, self).__init__()
         self.conv1 = nn.Conv2d(in_planes, out_planes, kernel_size=3, padding='same', stride=1, dilation=1)
@@ -84,35 +83,4 @@ class BasicBlock(nn.Module):
         x6 = self.conv6(x)
         x9 = self.conv9(x)
         x_t = x1 + (x3 + x6 + x9)/3
-        return self.relu(self.bn(x_t))"""
-
-
-class DACBlock(nn.Module):
-    def __init__(self, in_planes, out_planes):
-        super().__init__()
-        self.conv1 = nn.Conv2d(in_planes, out_planes, kernel_size=3, padding='same', dilation=1)
-        self.conv3 = nn.Conv2d(in_planes, out_planes, kernel_size=3, padding='same', dilation=3)
-        self.conv6 = nn.Conv2d(in_planes, out_planes, kernel_size=3, padding='same', dilation=6)
-        self.conv9 = nn.Conv2d(in_planes, out_planes, kernel_size=3, padding='same', dilation=9)
-        self.bn = nn.BatchNorm2d(out_planes)
-        self.relu = nn.ReLU(inplace=False)
-
-        self.res_proj = None
-        if in_planes != out_planes:
-            self.res_proj = nn.Conv2d(in_planes, out_planes, kernel_size=1, bias=False)
-
-    def forward(self, x):
-        # break shared-storage / view aliasing
-        x_in = x.clone()
-
-        x1 = self.conv1(x_in)
-        x3 = self.conv3(x_in)
-        x6 = self.conv6(x_in)
-        x9 = self.conv9(x_in)
-
-        out = torch.stack([x1, x3, x6, x9], dim=0).mean(dim=0)
-        out = self.bn(out)
-
-        residual = x if self.res_proj is None else self.res_proj(x)
-        out = out + residual  # out is a fresh tensor; add returns new tensor
-        return self.relu(out)
+        return self.relu(self.bn(x_t))

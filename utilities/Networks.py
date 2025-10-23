@@ -71,7 +71,18 @@ def networks(architecture, in_channels, num_classes, pretrained, requires_grad, 
         final_feat_ch = model.classifier.in_features  # DenseNet uses this = 2208 for densenet161
 
         # append averaged dilated conv block (keeps channel count)
-        model.features.add_module('avg_dilated', DACBlock(in_planes=final_feat_ch, out_planes=final_feat_ch))
+        # model.features.add_module('avg_dilated', DACBlock(in_planes=final_feat_ch, out_planes=final_feat_ch))
+
+        reduced_ch = max(64, final_feat_ch // 8)  # tune 8 -> 4/16 if you want
+        model.features.add_module('avg_dilated_proj', nn.Sequential(
+            nn.Conv2d(final_feat_ch, reduced_ch, kernel_size=1, bias=False),
+            nn.BatchNorm2d(reduced_ch),
+            nn.ReLU(inplace=False),
+            DACBlock(reduced_ch, reduced_ch),  # DAC works on smaller channel count
+            nn.Conv2d(reduced_ch, final_feat_ch, kernel_size=1, bias=False),
+            nn.BatchNorm2d(final_feat_ch),
+            nn.ReLU(inplace=False),
+        ))
 
         # replace classifier head
         model.classifier = nn.Linear(model.classifier.in_features, num_classes)
